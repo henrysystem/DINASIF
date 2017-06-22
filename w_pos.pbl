@@ -283,7 +283,7 @@ String temp_msj
 
 //Variables Proforma Origen, factura origen
 	String is_valprof, is_valotros, is_chq_orprom = 'N', is_valprom, is_chq_ordesc= 'N', is_actualiza_desc = 'N', is_accessdescmov, is_profmovi, is_inprom_schools = 'N', is_codcli_school
-	Integer ii_visdesc2
+	Char ich_visdesc2
 end variables
 
 forward prototypes
@@ -408,20 +408,25 @@ else
 	end if
 end if
 
-String valor, ls_per
+//Control  de visualizacion para el descuento 2 a través del campo PS_ESTADO en la tabla PR_NUMSUC 
 
-SELECT PR_VALOR
-INTO :ii_visdesc2
-FROM PR_PARAM
-WHERE PR_NOMBRE like 'DSC2_VIS';
+SELECT PS_ESTADO 
+INTO :ich_visdesc2
+FROM PR_NUMSUC 
+WHERE SU_CODIGO = :str_appgeninfo.sucursal
+AND PR_NOMBRE  = 'DSC_POS';
 
-if ii_visdesc2 = 1 then
+
+
+if ich_visdesc2 = '1' then
 	dw_det.object.dv_desc2.visible = true
 	dw_det.object.compute_2.visible = false
 	dw_cab.object.t_15.visible = false
-elseif ii_visdesc2 = 0 then
+elseif ich_visdesc2 = '0' then
 	dw_det.object.dv_desc2.visible = false
 	dw_cab.object.t_15.visible = true
+	dw_det.modify("compute_5.Expression='0'")
+
 
 end if
 	
@@ -14620,11 +14625,9 @@ if (KeyDown(Keycontrol!) and KeyDown(Keyd!)) then
 															  End if          
 														END IF
                                                next
-											    	if ii_visdesc2 = 1 then
-													dw_det.object.p_desc2.visible = false
-												elseif ii_visdesc2 = 0 then
-													dw_det.object.p_desc2.visible  = true
-													    messagebox('Aviso','Se acaba de aplicar el descuento 2 en los items de la factura....!', Exclamation!)
+											    
+												if ich_visdesc2 = '0' then
+													 messagebox('Aviso','Se acaba de aplicar el descuento 2 en los items de la factura....!', Exclamation!)
 												end if
 									  	      
                 
@@ -14633,8 +14636,8 @@ if (KeyDown(Keycontrol!) and KeyDown(Keyd!)) then
                                                                setitem(i,"dv_desc2",0.00)
 											    
                                                next      
-									  if ii_visdesc2 = 0 then
-											dw_det.object.p_desc2.visible  = false
+									  if ich_visdesc2 = '0' then
+										
 										   messagebox('Aviso','Se desactivo el descuento  2 en los items de la factura....!', Exclamation!)
 									 end if
 									   
@@ -15897,11 +15900,9 @@ char lch_itcosto, lch_itdescue
                                                                               //end if //jaic obsequios
                                                next
 															  
-											   	if ii_visdesc2 = 1 then
-													dw_det.object.p_desc2.visible = false
-												elseif ii_visdesc2 = 0 then
-													dw_det.object.p_desc2.visible  = true
-													      messagebox('Aviso','Se acaba de aplicar el descuento 2 en los items de la factura....!', Exclamation!)
+											
+												if ich_visdesc2 = '0' then
+												     messagebox('Aviso','Se acaba de aplicar el descuento 2 en los items de la factura....!', Exclamation!)
 												end if
 									       
 											 
@@ -15924,9 +15925,8 @@ char lch_itcosto, lch_itdescue
                                                                
                                                next      
 								
-									if ii_visdesc2 = 0 then
-											dw_det.object.p_desc2.visible  = false
-											messagebox('Aviso','Se desactivo el descuento  2 en los items de la factura....!', Exclamation!)
+									if ich_visdesc2 = '0' then
+										messagebox('Aviso','Se desactivo el descuento  2 en los items de la factura....!', Exclamation!)
 									end if
                
 									
