@@ -408,7 +408,7 @@ else
 	end if
 end if
 
-String valor
+String valor, ls_per
 
 SELECT PR_VALOR
 INTO :ii_visdesc2
